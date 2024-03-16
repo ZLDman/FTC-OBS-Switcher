@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTC OBS Switcher</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .column {
+            width: 50%;
+            padding: 10px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .status {
+            margin: 10px auto;
+            font-size: 20px;
+        }
+
+        .input-group {
+            margin: 10px auto;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .input-like-button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #333333;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #333333;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .main_buttons {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #333333;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #connect1, #disconnect1, #connect2, #disconnect2, #enable, #disable {
+            width: 100%;
+        }
+
+        .field {
+            margin-top: 20px;
+        }
+
+        .middle-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .github-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <h1>FTC OBS Switcher</h1>
+
+    <div class="row">
+        <div class="column">
+            <div class="status" id="enableStatus" class="main_buttons">🟥 OFF</div>
+        </div>
+
+        <div class="column">
+            <button id="enable" class="main_buttons">Enable</button>
+        </div>
+
+        <div class="column">
+            <button id="disable" class="main_buttons">Disable</button>
+        </div>
+    </div>
+    
+    <div class="row field">
+        <div class="column">
+            <h2>FIELD 1</h2>
+            <div class="status">Match: <div id="shortName1">?</div></div>
+            <div class="status">Last Update: <div id="updateType1">?</div></div>
+        </div>
+
+        <div class="column">
+            <h2>FIELD 2</h2>
+            <div class="status">Match: <div id="shortName2">?</div></div>
+            <div class="status">Last Update: <div id="updateType2">?</div></div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="column">
+            <h2>OBS</h2>
+            <div class="status" id="obsStatus">🟥 Disconnected</div>
+            <div class="input-group">
+                <label for="obsHost">OBS HOST:</label>
+                <input id="obsHost" value="localhost" disabled type="url" class="input-like-button">
+            </div>
+            <div class="input-group">
+                <label for="obsPort">PORT:</label>
+                <input id="obsPort" value="4455" disabled type="number" class="input-like-button">
+            </div>
+            <div class="input-group">
+                <label for="obsPassword">Server Password:</label>
+                <input id="obsPassword" value="lVjHNHN9sMmQnKOv" disabled type="text"  class="input-like-button">
+            </div>
+            <button id="obsConnect" class="button">Connect</button>
+            <button id="obsDisconnect" class="button">Disconnect</button>
+        </div>
+
+        <div class="column">
+            <h2>FTC</h2>
+            <div class="status" id="ftcStatus">🟥 Disconnected</div>
+            <div class="input-group">
+                <label for="ftcHost">FTC HOST:</label>
+                <input id="ftcHost" value="localhost" disabled class="input-like-button">
+            </div>
+            <div class="input-group">
+                <label for="eventCode">EVENT CODE:</label>
+                <input id="eventCode" value="USPACMP" disabled class="input-like-button">
+            </div>
+            <div class="input-group">
+                <label for="finalsField">FINALS FIELD:</label>
+                <input id="finalsField" value="1" disabled type="number" class="input-like-button">
+            </div>
+            <button id="ftcConnect" class="button">Connect</button>
+        </div>
+    </div>
+
+
+<!--
+    <div class="container">
+        <div class="column">
+            <h2>Field 1</h2>
+            <div class="row">
+                <label for="SHOW_PREVIEW1">SHOW_PREVIEW:</label>
+                <input type="text" id="SHOW_PREVIEW1" class = "input-like-button">
+                <button class = "button">Test</button>
+            </div>
+            <div class="row">
+                <label for="SHOW_RANDOM1">SHOW_RANDOM:</label>
+                <input type="text" id="SHOW_RANDOM1" class = "input-like-button">
+                <button class = "button">Test</button>
+            </div>
+            <div class="row">
+                <label for="SHOW_MATCH1">SHOW_MATCH:</label>
+                <input type="text" id="SHOW_MATCH1" class = "input-like-button">
+                <button class = "button">Test</button>
+            </div>
+            <div class="row">
+                <label for="MATCH_START1">MATCH_START:</label>
+                <input type="text" id="MATCH_START1" class = "input-like-button">
+                <button class = "button">Test</button>
+            </div>
+            <div class="row">
+                <label for="MATCH_POST1">MATCH_POST:</label>
+                <input type="text" id="MATCH_POST1" class = "input-like-button">
+                <button class = "button">Test</button>
+            </div>
+            <div class="row">
+                <label for="MATCH_ABORT1">MATCH_ABORT:</label>
+                <input type="text" id="MATCH_ABORT1" class = "input-like-button">
+                <button class = "button">Test</button>
+            </div>
+        </div>
+        <div class="column">
+            <h2>Field 2</h2>
+            <div class="row">
+                <label for="SHOW_PREVIEW2">SHOW_PREVIEW:</label>
+                <input type="text" id="SHOW_PREVIEW2" class = "input-like-button">
+                <button class = "button">Test</button>
+            </div>
+            <div class="row">
+                <label for="SHOW_RANDOM2">SHOW_RANDOM:</label>
+                <input type="text" id="SHOW_RANDOM2" class = "input-like-button">
+                <button class = "button">Test</button>
+            </div>
+            <div class="row">
+                <label for="SHOW_MATCH2">SHOW_MATCH:</label>
+                <input type="text" id="SHOW_MATCH2" class = "input-like-button">
+                <button class = "button">Test</button>
+            </div>
+            <div class="row">
+                <label for="MATCH_START2">MATCH_START:</label>
+                <input type="text" id="MATCH_START2" class = "input-like-button">
+                <button class = "button">Test</button>
+            </div>
+            <div class="row">
+                <label for="MATCH_POST2">MATCH_POST:</label>
+                <input type="text" id="MATCH_POST2" class = "input-like-button">
+                <button class = "button">Test</button>
+            </div>
+            <div class="row">
+                <label for="MATCH_ABORT2">MATCH_ABORT:</label>
+                <input type="text" id="MATCH_ABORT2" class = "input-like-button">
+                <button class = "button">Test</button>
+            </div>
+        </div>
+    </div>
+-->
+
+    <div class="github-link">
+        Made by Zach FTC 11349 <a href="https://github.com/ZLDman/FTC-OBS-Switcher" target="_blank">https://github.com/ZLDman/FTC-OBS-Switcher</a>
+    </div>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        document.getElementById('obsConnect').addEventListener('click', function() {
+            socket.emit('obsConnect');
+        });
+
+        document.getElementById('obsDisconnect').addEventListener('click', function() {
+            socket.emit('obsDisconnect');
+        });
+
+        document.getElementById('ftcConnect').addEventListener('click', function() {
+            socket.emit('ftc');
+        });
+
+        document.getElementById('enable').addEventListener('click', function() {
+            socket.emit('enable');
+        });
+
+        document.getElementById('disable').addEventListener('click', function() {
+            socket.emit('disable');
+        });
+
+        // Listen for 'ftcStatus' event
+        socket.on('ftcStatus', function(data) {
+            document.getElementById('ftcStatus').innerText = data.message;
+        });
+
+        //lasten for 'obsStatus' event
+        socket.on('obsStatus', function(data) {
+            document.getElementById('obsStatus').innerText = data.message;
+        });
+
+        //lasten for 'obsStatus' event
+        socket.on('enableStatus', function(data) {
+            document.getElementById('enableStatus').innerText = data.message;
+        });
+
+        //update fields
+        socket.on('Field1', function(data) {
+            document.getElementById('shortName1').innerText = data.shortName;
+            document.getElementById('updateType1').innerText = data.updateType;
+        });
+        socket.on('Field2', function(data) {
+            document.getElementById('shortName2').innerText = data.shortName;
+            document.getElementById('updateType2').innerText = data.updateType;
+        });
+    </script>
+</body>
+</html>
