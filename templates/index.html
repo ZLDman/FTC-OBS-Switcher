@@ -6,98 +6,173 @@
     <title>FTC OBS Switcher</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            background-color: #1a1a1a;
-            color: #ffffff;
-            padding: 20px;
-        }
-
-        h1 {
+        h1, h2{
             text-align: center;
         }
 
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e1e;
+            color: #f4f4f4;
+        }
         .row {
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
+            width: 100%;
             margin-bottom: 20px;
+            justify-content: center
         }
-
         .column {
-            width: 50%;
+            flex: 1;
             padding: 10px;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: row;
-        }
-
-        .status {
-            margin: 10px auto;
-            font-size: 20px;
-        }
-
-        .input-group {
-            margin: 10px auto;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: inline-block;
-            margin-right: 10px;
-        }
-
-        .input-like-button {
-            padding: 10px;
-            font-size: 16px;
-            background-color: #333333;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
+            min-width: 200px;
             box-sizing: border-box;
         }
-
-        .button {
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #333333;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
+        .status {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
-
-        .main_buttons {
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #333333;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
-        }
-
-        #connect1, #disconnect1, #connect2, #disconnect2, #enable, #disable {
-            width: 100%;
-        }
-
-        .field {
-            margin-top: 20px;
-        }
-
-        .middle-column {
-            flex: 1;
+        .input-group {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            margin-bottom: 10px;
+            justify-content: space-between;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* Add space between buttons */
+            margin-top: 20px; /* Add some top margin if needed */
+        }
+        .button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            align-items: center;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .field {
+            margin-bottom: 20px;
+        }
+        .middle-column {
+            text-align: center;
+        }
+        .github-link {
+            color: #ffffff;
+            text-decoration: none;
+            text-align: center;
+            margin: 20px;
+        }
+        a:link {
+            text-decoration: none;
+        }
+
+        a:visited {
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            text-decoration: underline;
+        }
+        .dynamic-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            justify-content: center
+        }
+        .dynamic-column {
+            margin-right: 10px;
+        }
+        .dropdown, .time-box, .text-box, .input-like-button {
+            padding: 10px;
+            border: 1px solid #444;
+            background-color: #333;
+            color: #f4f4f4;
+            border-radius: 4px;
+        }
+        .dropdown:hover, .time-box:hover, .text-box:hover, .input-like-button:hover {
+            background-color: #444;
+        }
+        .delete-button {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            margin-left: 10px;
+            transition: background-color 0.3s ease;
+        }
+        .delete-button:hover {
+            background-color: #cc0000;
+        }
+        .main_buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            margin-right: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+            display: flex;
+            justify-content: center;
             align-items: center;
         }
 
-        .github-link {
-            text-align: center;
-            margin-top: 20px;
+        .modal-content {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border: 1px solid #444;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close {
+            color: #ffffff;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
@@ -118,38 +193,24 @@
             <button id="disable" class="main_buttons">Disable</button>
         </div>
     </div>
-    
-    <div class="row field">
-        <div class="column">
-            <h2>FIELD 1</h2>
-            <div class="status">Match: <div id="shortName1">?</div></div>
-            <div class="status">Last Update: <div id="updateType1">?</div></div>
-        </div>
-
-        <div class="column">
-            <h2>FIELD 2</h2>
-            <div class="status">Match: <div id="shortName2">?</div></div>
-            <div class="status">Last Update: <div id="updateType2">?</div></div>
-        </div>
-    </div>
 
     <div class="row">
-
         <div class="column">
             <h2>OBS</h2>
             <div class="status" id="obsStatus">🟥 Disconnected</div>
             <div class="input-group">
                 <label for="obsHost">OBS HOST:</label>
-                <input id="obsHost" value="localhost" disabled type="url" class="input-like-button">
+                <input id="obsHost" type="url" class="input-like-button">
             </div>
             <div class="input-group">
                 <label for="obsPort">PORT:</label>
-                <input id="obsPort" value="4455" disabled type="number" class="input-like-button">
+                <input id="obsPort" type="number" class="input-like-button">
             </div>
             <div class="input-group">
                 <label for="obsPassword">Server Password:</label>
-                <input id="obsPassword" value="lVjHNHN9sMmQnKOv" disabled type="text"  class="input-like-button">
+                <input id="obsPassword" type="text" class="input-like-button">
             </div>
+            <button id="updateObsSettings" class="button">Save</button>
             <button id="obsConnect" class="button">Connect</button>
             <button id="obsDisconnect" class="button">Disconnect</button>
         </div>
@@ -159,98 +220,63 @@
             <div class="status" id="ftcStatus">🟥 Disconnected</div>
             <div class="input-group">
                 <label for="ftcHost">FTC HOST:</label>
-                <input id="ftcHost" value="localhost" disabled class="input-like-button">
+                <input id="ftcHost" class="input-like-button">
             </div>
             <div class="input-group">
                 <label for="eventCode">EVENT CODE:</label>
-                <input id="eventCode" value="USPACMP" disabled class="input-like-button">
+                <input id="eventCode" class="input-like-button">
             </div>
             <div class="input-group">
                 <label for="finalsField">FINALS FIELD:</label>
-                <input id="finalsField" value="1" disabled type="number" class="input-like-button">
+                <input id="finalsField" type="number" class="input-like-button">
             </div>
+            <button id="updateFtcSettings" class="button">Save</button>
             <button id="ftcConnect" class="button">Connect</button>
+            <button id="ftcDisconnect" class="button">Disconnect</button>
         </div>
     </div>
-
-
-<!--
-    <div class="container">
-        <div class="column">
-            <h2>Field 1</h2>
-            <div class="row">
-                <label for="SHOW_PREVIEW1">SHOW_PREVIEW:</label>
-                <input type="text" id="SHOW_PREVIEW1" class = "input-like-button">
-                <button class = "button">Test</button>
+        <h2>Switching Rules</h2>
+        <div id="rule_container">
+            <div id="container">
+                <!-- Dynamic rows will be added here -->
             </div>
-            <div class="row">
-                <label for="SHOW_RANDOM1">SHOW_RANDOM:</label>
-                <input type="text" id="SHOW_RANDOM1" class = "input-like-button">
-                <button class = "button">Test</button>
-            </div>
-            <div class="row">
-                <label for="SHOW_MATCH1">SHOW_MATCH:</label>
-                <input type="text" id="SHOW_MATCH1" class = "input-like-button">
-                <button class = "button">Test</button>
-            </div>
-            <div class="row">
-                <label for="MATCH_START1">MATCH_START:</label>
-                <input type="text" id="MATCH_START1" class = "input-like-button">
-                <button class = "button">Test</button>
-            </div>
-            <div class="row">
-                <label for="MATCH_POST1">MATCH_POST:</label>
-                <input type="text" id="MATCH_POST1" class = "input-like-button">
-                <button class = "button">Test</button>
-            </div>
-            <div class="row">
-                <label for="MATCH_ABORT1">MATCH_ABORT:</label>
-                <input type="text" id="MATCH_ABORT1" class = "input-like-button">
-                <button class = "button">Test</button>
-            </div>
-        </div>
-        <div class="column">
-            <h2>Field 2</h2>
-            <div class="row">
-                <label for="SHOW_PREVIEW2">SHOW_PREVIEW:</label>
-                <input type="text" id="SHOW_PREVIEW2" class = "input-like-button">
-                <button class = "button">Test</button>
-            </div>
-            <div class="row">
-                <label for="SHOW_RANDOM2">SHOW_RANDOM:</label>
-                <input type="text" id="SHOW_RANDOM2" class = "input-like-button">
-                <button class = "button">Test</button>
-            </div>
-            <div class="row">
-                <label for="SHOW_MATCH2">SHOW_MATCH:</label>
-                <input type="text" id="SHOW_MATCH2" class = "input-like-button">
-                <button class = "button">Test</button>
-            </div>
-            <div class="row">
-                <label for="MATCH_START2">MATCH_START:</label>
-                <input type="text" id="MATCH_START2" class = "input-like-button">
-                <button class = "button">Test</button>
-            </div>
-            <div class="row">
-                <label for="MATCH_POST2">MATCH_POST:</label>
-                <input type="text" id="MATCH_POST2" class = "input-like-button">
-                <button class = "button">Test</button>
-            </div>
-            <div class="row">
-                <label for="MATCH_ABORT2">MATCH_ABORT:</label>
-                <input type="text" id="MATCH_ABORT2" class = "input-like-button">
-                <button class = "button">Test</button>
+            <div class="button-container">
+                <button class="button" onclick="addRow()">Add Rule</button>
+                <button id="saveRules" class="button">Save</button>
+                <button id="openModalBtn" class="button">Timestamp</button>
             </div>
         </div>
     </div>
--->
 
     <div class="github-link">
         Made by Zach FTC 11349 <a href="https://github.com/ZLDman/FTC-OBS-Switcher" target="_blank">https://github.com/ZLDman/FTC-OBS-Switcher</a>
     </div>
+
+    <!-- Modal Structure -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span id="closeModalBtn" class="close">&times;</span>
+            <h2>Enter Event and Match Details</h2>
+            <form id="detailsForm">                
+                <label for="startMatchNumber">Starting Match Number:</label>
+                <input type="number" value="1" id="startMatchNumber" name="startMatchNumber" class="input-like-button" required><br><br>
+                
+                <label for="startMatchTimestamp">Starting Match Timestamp (HH:MM:SS):</label>
+                <input type="text" value="00:00:00" id="startMatchTimestamp" name="startMatchTimestamp" class="input-like-button" required><br><br>
+                
+                <button type="button" id="submitFormBtn" class="input-like-button">Submit</button>
+            </form>
+            <br>
+            <h3>Match Details</h3>
+            <textarea id="outputText" rows="10" cols="50" class="input-like-button" readonly></textarea><br>
+            <button id="copyBtn" class="input-like-button">Copy to Clipboard</button>
+        </div>
+    </div>
+
     <script>
         var socket = io.connect('http://' + document.domain + ':' + location.port);
 
+        // Event listeners for buttons
         document.getElementById('obsConnect').addEventListener('click', function() {
             socket.emit('obsConnect');
         });
@@ -260,7 +286,11 @@
         });
 
         document.getElementById('ftcConnect').addEventListener('click', function() {
-            socket.emit('ftc');
+            socket.emit('ftcConnect');
+        });
+
+        document.getElementById('ftcDisconnect').addEventListener('click', function() {
+            socket.emit('ftcDisconnect');
         });
 
         document.getElementById('enable').addEventListener('click', function() {
@@ -271,30 +301,225 @@
             socket.emit('disable');
         });
 
-        // Listen for 'ftcStatus' event
-        socket.on('ftcStatus', function(data) {
-            document.getElementById('ftcStatus').innerText = data.message;
+        document.getElementById('updateObsSettings').addEventListener('click', function() {
+            var obsHost = document.getElementById('obsHost').value;
+            var obsPort = document.getElementById('obsPort').value;
+            var obsPassword = document.getElementById('obsPassword').value;
+            socket.emit('update_obs_rules', { obsHost: obsHost, obsPort: obsPort, obsPassword: obsPassword });
         });
 
-        //lasten for 'obsStatus' event
+        document.getElementById('updateFtcSettings').addEventListener('click', function() {
+            var ftcHost = document.getElementById('ftcHost').value;
+            var eventCode = document.getElementById('eventCode').value;
+            var finalsField = document.getElementById('finalsField').value;
+            socket.emit('update_ftc_rules', { ftcHost: ftcHost, eventCode: eventCode, finalsField: finalsField });
+        });
+
+        // Event listener to capture updates to switching rules
+        document.getElementById('saveRules').addEventListener('click', function() {
+            var rules = [];
+            document.querySelectorAll('.dynamic-row').forEach(row => {
+                var rule = {
+                    when: row.querySelector('.dropdown[name="when"]').value,
+                    on: row.querySelector('.dropdown[name="on"]').value,
+                    wait: row.querySelector('.time-box').value,
+                    switchTo: row.querySelector('.text-box').value
+                };
+                rules.push(rule);
+            });
+            socket.emit('update_switching_rules', rules);
+        });
+
+        //Functions to change status labels
+
         socket.on('obsStatus', function(data) {
-            document.getElementById('obsStatus').innerText = data.message;
+            console.log("obsStatus: " + data.message);
+            document.getElementById('obsStatus').innerHTML = data.message;
         });
 
-        //lasten for 'obsStatus' event
+        socket.on('ftcStatus', function(data) {
+            console.log("ftcStatus: " + data.message);
+            document.getElementById('ftcStatus').innerHTML = data.message;
+        });
+
         socket.on('enableStatus', function(data) {
-            document.getElementById('enableStatus').innerText = data.message;
+            console.log("enableStatus: " + data.message);
+            document.getElementById('enableStatus').innerHTML = data.message;
         });
 
-        //update fields
-        socket.on('Field1', function(data) {
-            document.getElementById('shortName1').innerText = data.shortName;
-            document.getElementById('updateType1').innerText = data.updateType;
+        // Function to add new dynamic rows
+        function addRow() {
+            var container = document.getElementById('container');
+            var row = document.createElement('div');
+            row.className = 'dynamic-row';
+
+            row.innerHTML = `
+                <div class="dynamic-column">
+                    <select class="dropdown" name="when">
+                        <option value="SHOW_PREVIEW">SHOW_PREVIEW</option>
+                        <option value="SHOW_RANDOM">SHOW_RANDOM</option>
+                        <option value="SHOW_MATCH">SHOW_MATCH</option>
+                        <option value="MATCH_START">MATCH_START</option>
+                        <option value="MATCH_POST">MATCH_POST</option>
+                        <option value="MATCH_ABORT">MATCH_ABORT</option>
+                    </select>
+                </div>
+                <div class="dynamic-column">
+                    <select class="dropdown" name="on">
+                        <option value="field1">field1</option>
+                        <option value="field2">field2</option>
+                        <option value="any">any</option>
+                    </select>
+                </div>
+                <div class="dynamic-column">
+                    <input type="number" value="0" class="time-box">
+                </div>
+                <div class="dynamic-column">
+                    <input type="text" class="text-box" placeholder="Scene Name">
+                </div>
+                <button class="button delete-button" onclick="deleteRow(this)">x</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function deleteRow(button) {
+            var row = button.parentNode;
+            row.parentNode.removeChild(row);
+        }
+
+        socket.on('update_ftc_rules', function(rules) {
+            console.log(rules)
         });
-        socket.on('Field2', function(data) {
-            document.getElementById('shortName2').innerText = data.shortName;
-            document.getElementById('updateType2').innerText = data.updateType;
+
+        socket.on('update_obs_rules', function(rules) {
+            console.log(rules)
         });
+
+        // Initial rule load from the backend
+        socket.on('update_switching_rules', function(rules) {
+            var container = document.getElementById('container');
+            container.innerHTML = '';
+            rules.forEach(rule => {
+                var row = document.createElement('div');
+                row.className = 'dynamic-row';
+
+                row.innerHTML = `
+                    <div class="dynamic-column">
+                        <select class="dropdown" name="when">
+                            <option value="SHOW_PREVIEW">SHOW_PREVIEW</option>
+                            <option value="SHOW_RANDOM">SHOW_RANDOM</option>
+                            <option value="SHOW_MATCH">SHOW_MATCH</option>
+                            <option value="MATCH_START">MATCH_START</option>
+                            <option value="MATCH_POST">MATCH_POST</option>
+                            <option value="MATCH_ABORT">MATCH_ABORT</option>
+                        </select>
+                    </div>
+                    <div class="dynamic-column">
+                        <select class="dropdown" name="on">
+                            <option value="field1">field1</option>
+                            <option value="field2">field2</option>
+                            <option value="any">any</option>
+                        </select>
+                    </div>
+                    <div class="dynamic-column">
+                        <input type="number" class="time-box" value="${rule.wait}">
+                    </div>
+                    <div class="dynamic-column">
+                        <input type="text" class="text-box" value="${rule.switchTo}" placeholder="Scene Name">
+                    </div>
+                    <button class="button delete-button" onclick="deleteRow(this)">x</button>
+                `;
+                container.appendChild(row);
+
+                // Set the value of the dropdowns after appending the row
+                row.querySelector('select[name="when"]').value = rule.when;
+                row.querySelector('select[name="on"]').value = rule.on;
+            });
+        });
+
+        // Initial rule load from the backend
+        socket.on('update_obs_rules', function(rules) {
+            document.getElementById('obsHost').value = rules.host;
+            document.getElementById('obsPort').value = rules.port;
+            document.getElementById('obsPassword').value = rules.password;
+        });
+
+        // Initial rule load from the backend
+        socket.on('update_ftc_rules', function(rules) {
+            document.getElementById('ftcHost').value = rules.host;
+            document.getElementById('eventCode').value = rules.event_code;
+            document.getElementById('finalsField').value = rules.finals_field;
+        });
+
+        // Initial fetch of switching rules from the server
+        socket.emit('pageLoad');
+        socket.emit('fetch_ftc_rules');
+        socket.emit('fetch_obs_rules');
+        socket.emit('fetch_switching_rules');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('modal');
+            const openModalBtn = document.getElementById('openModalBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const submitFormBtn = document.getElementById('submitFormBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const outputText = document.getElementById('outputText');
+
+            openModalBtn.onclick = () => {
+                modal.style.display = 'flex';
+            };
+
+            closeModalBtn.onclick = () => {
+                modal.style.display = 'none';
+            };
+
+            window.onclick = (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+
+            submitFormBtn.onclick = async () => {
+                const eventCode = document.getElementById('eventCode').value;
+                const startMatchNumber = parseInt(document.getElementById('startMatchNumber').value);
+                const startMatchTimestamp = document.getElementById('startMatchTimestamp').value;
+
+                try {
+                    const response = await fetch(`http://localhost/api/v2/events/${eventCode}/full/`);
+                    const data = await response.json();
+
+                    const convertToYoutubeTimestamp = (startTime, offsetSeconds) => {
+                        const startDatetime = new Date(startTime);
+                        const newTime = new Date(startDatetime.getTime() + offsetSeconds * 1000);
+                        return newTime.toISOString().substr(11, 8);
+                    };
+
+                    const startMatchTime = new Date(`1970-01-01T${startMatchTimestamp}Z`);
+                    const matchStartTime = new Date(data.matchList.matches[startMatchNumber - 1].startTime * 1000);
+                    const offsetSeconds = (startMatchTime - matchStartTime) / 1000;
+
+                    const detailsList = data.matchList.matches.slice(startMatchNumber - 1).map(match => {
+                        const matchStartTime = new Date(match.startTime * 1000);
+                        const youtubeTimestamp = convertToYoutubeTimestamp(matchStartTime, offsetSeconds);
+                        const redTeams = [match.red.robot1, match.red.robot2].sort((a, b) => a - b);
+                        const blueTeams = [match.blue.robot1, match.blue.robot2].sort((a, b) => a - b);
+                        return `${youtubeTimestamp} ${match.matchBrief.matchName} (${match.redScore}) ${redTeams.join(', ')} vs (${match.blueScore}) ${blueTeams.join(', ')}`;
+                    });
+
+                    outputText.value = detailsList.join('\n');
+                } catch (error) {
+                    console.error('Error fetching match data:', error);
+                    outputText.value = 'Error fetching match data';
+                }
+            };
+
+            copyBtn.onclick = () => {
+                outputText.select();
+                document.execCommand('copy');
+                alert('Copied to clipboard');
+            };
+        });
+
     </script>
 </body>
 </html>

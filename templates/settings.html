@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTC OBS Switcher</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .column {
+            width: 50%;
+            padding: 10px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .status {
+            margin: 10px auto;
+            font-size: 20px;
+        }
+
+        .input-group {
+            margin: 10px auto;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .input-like-button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #333333;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #333333;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .main_buttons {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #333333;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #connect1, #disconnect1, #connect2, #disconnect2, #enable, #disable {
+            width: 100%;
+        }
+
+        .field {
+            margin-top: 20px;
+        }
+
+        .middle-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .github-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* Additional Styles for Dynamic Rows and Columns */
+        .header-row, .dynamic-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .dynamic-column {
+            flex: 1;
+            padding: 10px;
+        }
+        .dropdown, .time-box, .text-box {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+        .add-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+        }
+        .delete-button {
+            background-color: #f44336;
+            color: white;
+            border: none;
+        }
+        .header-row {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .header-row .dynamic-column {
+            padding: 10px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <h1>FTC OBS Switcher</h1>
+
+    <div class="row">
+        <div class="column">
+            <div class="status" id="enableStatus" class="main_buttons">🟥 OFF</div>
+        </div>
+
+        <div class="column">
+            <button id="enable" class="main_buttons">Enable</button>
+        </div>
+
+        <div class="column">
+            <button id="disable" class="main_buttons">Disable</button>
+        </div>
+    </div>
+    
+    <div class="row field">
+        <div class="column">
+            <h2>FIELD 1</h2>
+            <div class="status">Match: <div id="shortName1">?</div></div>
+            <div class="status">Last Update: <div id="updateType1">?</div></div>
+        </div>
+
+        <div class="column">
+            <h2>FIELD 2</h2>
+            <div class="status">Match: <div id="shortName2">?</div></div>
+            <div class="status">Last Update: <div id="updateType2">?</div></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="column">
+            <h2>OBS</h2>
+            <div class="status" id="obsStatus">🟥 Disconnected</div>
+            <div class="input-group">
+                <label for="obsHost">OBS HOST:</label>
+                <input id="obsHost" value="localhost" type="url" class="input-like-button">
+            </div>
+            <div class="input-group">
+                <label for="obsPort">PORT:</label>
+                <input id="obsPort" value="4455" type="number" class="input-like-button">
+            </div>
+            <div class="input-group">
+                <label for="obsPassword">Server Password:</label>
+                <input id="obsPassword" value="lVjHNHN9sMmQnKOv" type="text" class="input-like-button">
+            </div>
+            <button id="obsConnect" class="button">Connect</button>
+            <button id="obsDisconnect" class="button">Disconnect</button>
+        </div>
+
+        <div class="column">
+            <h2>FTC</h2>
+            <div class="status" id="ftcStatus">🟥 Disconnected</div>
+            <div class="input-group">
+                <label for="ftcHost">FTC HOST:</label>
+                <input id="ftcHost" value="localhost" class="input-like-button">
+            </div>
+            <div class="input-group">
+                <label for="eventCode">EVENT CODE:</label>
+                <input id="eventCode" value="USPACMP" class="input-like-button">
+            </div>
+            <div class="input-group">
+                <label for="finalsField">FINALS FIELD:</label>
+                <input id="finalsField" value="1" type="number" class="input-like-button">
+            </div>
+            <button id="ftcConnect" class="button">Connect</button>
+        </div>
+    </div>
+
+    <!-- Inserted Dynamic Rows and Columns Section -->
+    <div class="header-row">
+        <div class="dynamic-column">When</div>
+        <div class="dynamic-column">On</div>
+        <div class="dynamic-column">Wait</div>
+        <div class="dynamic-column">Switch To</div>
+    </div>
+
+    <div id="container">
+        <div class="dynamic-row">
+            <div class="dynamic-column">
+                <select class="dropdown">
+                    <option value="SHOW_PREVIEW">SHOW_PREVIEW</option>
+                    <option value="SHOW_RANDOM">SHOW_RANDOM</option>
+                    <option value="SHOW_MATCH">SHOW_MATCH</option>
+                    <option value="MATCH_START">MATCH_START</option>
+                    <option value="MATCH_POST">MATCH_POST</option>
+                    <option value="MATCH_ABORT">MATCH_ABORT</option>
+                </select>
+            </div>
+            <div class="dynamic-column">
+                <select class="dropdown">
+                    <option value="field1">field1</option>
+                    <option value="field2">field2</option>
+                    <option value="any">any</option>
+                </select>
+            </div>
+            <div class="dynamic-column">
+                <input type="number" class="time-box">
+            </div>
+            <div class="dynamic-column">
+                <input type="text" class="text-box" placeholder="Scene Name">
+            </div>
+            <button class="button delete-button" onclick="deleteRow(this)">x</button>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="button add-button" onclick="addRow()">+</button>
+    </div>
+    <!-- End of Inserted Section -->
+
+    <div class="github-link">
+        Made by Zach FTC 11349 <a href="https://github.com/ZLDman/FTC-OBS-Switcher" target="_blank">https://github.com/ZLDman/FTC-OBS-Switcher</a>
+    </div>
+
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        document.getElementById('obsConnect').addEventListener('click', function() {
+            socket.emit('obsConnect');
+        });
+
+        document.getElementById('obsDisconnect').addEventListener('click', function() {
+            socket.emit('obsDisconnect');
+        });
+
+        document.getElementById('ftcConnect').addEventListener('click', function() {
+            socket.emit('ftc');
+        });
+
+        document.getElementById('enable').addEventListener('click', function() {
+            socket.emit('enable');
+        });
+
+        document.getElementById('disable').addEventListener('click', function() {
+            socket.emit('disable');
+        });
+
+        socket.on('update', function(data) {
+            console.log(data);
+            document.getElementById("shortName1").innerHTML = data.field1.shortName;
+            document.getElementById("updateType1").innerHTML = data.field1.updateType;
+            document.getElementById("shortName2").innerHTML = data.field2.shortName;
+            document.getElementById("updateType2").innerHTML = data.field2.updateType;
+        });
+
+        socket.on('obsStatus', function(data) {
+            console.log(data);
+            document.getElementById('obsStatus').innerHTML = data;
+        });
+
+        socket.on('ftcStatus', function(data) {
+            console.log(data);
+            document.getElementById('ftcStatus').innerHTML = data;
+        });
+
+        socket.on('enabled', function(data) {
+            console.log(data);
+            document.getElementById('enableStatus').innerHTML = data ? '🟩 ON' : '🟥 OFF';
+        });
+
+        function addRow() {
+            var container = document.getElementById('container');
+            var row = document.createElement('div');
+            row.className = 'dynamic-row';
+
+            row.innerHTML = `
+                <div class="dynamic-column">
+                    <select class="dropdown">
+                        <option value="SHOW_PREVIEW">SHOW_PREVIEW</option>
+                        <option value="SHOW_RANDOM">SHOW_RANDOM</option>
+                        <option value="SHOW_MATCH">SHOW_MATCH</option>
+                        <option value="MATCH_START">MATCH_START</option>
+                        <option value="MATCH_POST">MATCH_POST</option>
+                        <option value="MATCH_ABORT">MATCH_ABORT</option>
+                    </select>
+                </div>
+                <div class="dynamic-column">
+                    <select class="dropdown">
+                        <option value="field1">field1</option>
+                        <option value="field2">field2</option>
+                        <option value="any">any</option>
+                    </select>
+                </div>
+                <div class="dynamic-column">
+                    <input type="number" class="time-box">
+                </div>
+                <div class="dynamic-column">
+                    <input type="text" class="text-box" placeholder="Scene Name">
+                </div>
+                <button class="button delete-button" onclick="deleteRow(this)">x</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function deleteRow(button) {
+            var row = button.parentNode;
+            row.parentNode.removeChild(row);
+        }
+    </script>
+</body>
+</html>
